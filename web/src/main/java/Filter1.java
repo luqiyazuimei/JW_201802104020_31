@@ -1,7 +1,10 @@
+import com.alibaba.fastjson.JSONObject;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebFilter(filterName = "Filter1",
@@ -13,17 +16,15 @@ public class Filter1 implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
         String path = request.getRequestURI();
-        boolean contains = path.contains("/login")|| path.contains("myapp");
-        String method = request.getMethod();
-        if(!path.contains("myapp")){
-            if (method.equals("PUT") || method.equals("POST")){
-                //设置响应字符编码为UTF-8
-                response.setContentType("text/html;charset=UTF-8");
-                //设置请求字符编码为UTF-8
                 request.setCharacterEncoding("UTF-8");
-            }else {
-                //设置请求字符编码为UTF-8
                 response.setContentType("text/html;charset=UTF-8");
+        if (!path.contains("/login") && !path.contains("/logout")){
+            JSONObject message = new JSONObject();
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("currentUser") == null){
+                message.put("message","请登录或重新登录");
+                response.getWriter().println(message);
+                return;
             }
         }
         chain.doFilter(req, resp);

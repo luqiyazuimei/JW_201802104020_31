@@ -19,9 +19,8 @@ public class DegreeController extends HttpServlet {
         String degree_json = JSONUtil.getJSON(request);
         //将JSON字串解析为Degree对象
         Degree degreeToAdd = JSON.parseObject(degree_json, Degree.class);
-        degreeToAdd.setId(4+(int)(Math.random()*100));
-        System.out.println(degreeToAdd);
         JSONObject message = new JSONObject();
+        degreeToAdd.setId(4+(int)(Math.random()*100));
         try {
             DegreeService.getInstance().add(degreeToAdd);
             message.put("message", "add successfully");
